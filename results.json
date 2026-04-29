@@ -1,10 +1,1 @@
-{
-    "B": {
-        "1D CNN": 0.15018422901630402,
-        "LSTM": 0.20881536602973938,
-        "GNN (simple_mlp)": 0.16424211859703064,
-        "WaveGraphNet (Inverse Only)": 0.1511990875005722,
-        "WaveGraphNet (Coupled)": 0.14239555597305298,
-        "WaveGraphNet (Improved)": 0.17294201254844666
-    }
-}
+{}

@@ -1,0 +1,53 @@
+nohup: ignoring input
+
+#################################################################
+#  SEED = 0
+#################################################################
+
+=================================================================
+Executing: /home/visharma/gnn/venv/bin/python main_cnn.py --split B --seed 0 --lr 1e-4 --batch_size 8 --epochs 500 --num_fft_bins 256
+=================================================================
+--- 1D CNN | split=B seed=0 lr=0.0001 batch=8 epochs=500 fft_bins=256 ---
+Epoch 001 | Train: 0.065686 | Test: 0.180272 | LR: 1.00e-04
+Epoch 010 | Train: 0.059322 | Test: 0.164367 | LR: 1.00e-04
+Epoch 020 | Train: 0.058997 | Test: 0.160099 | LR: 1.00e-04
+Epoch 030 | Train: 0.052681 | Test: 0.158699 | LR: 1.00e-04
+Epoch 040 | Train: 0.014328 | Test: 0.184137 | LR: 1.00e-04
+Epoch 050 | Train: 0.006658 | Test: 0.177038 | LR: 1.00e-04
+Epoch 060 | Train: 0.004611 | Test: 0.183796 | LR: 1.00e-04
+Epoch 070 | Train: 0.005495 | Test: 0.191611 | LR: 1.00e-04
+Epoch 080 | Train: 0.004866 | Test: 0.181280 | LR: 1.00e-04
+Epoch 090 | Train: 0.005091 | Test: 0.179107 | LR: 1.00e-04
+Epoch 100 | Train: 0.004799 | Test: 0.221028 | LR: 1.00e-04
+Epoch 110 | Train: 0.004331 | Test: 0.201146 | LR: 1.00e-04
+Epoch 120 | Train: 0.002695 | Test: 0.179842 | LR: 1.00e-04
+Epoch 130 | Train: 0.002791 | Test: 0.187523 | LR: 1.00e-04
+Epoch 140 | Train: 0.002627 | Test: 0.189210 | LR: 1.00e-04
+Epoch 150 | Train: 0.001307 | Test: 0.186344 | LR: 1.00e-04
+Epoch 160 | Train: 0.002009 | Test: 0.192123 | LR: 1.00e-04
+Epoch 170 | Train: 0.001783 | Test: 0.197303 | LR: 1.00e-04
+Epoch 180 | Train: 0.001666 | Test: 0.199864 | LR: 1.00e-04
+Epoch 190 | Train: 0.001101 | Test: 0.191185 | LR: 8.00e-05
+Epoch 200 | Train: 0.001540 | Test: 0.192784 | LR: 8.00e-05
+Epoch 210 | Train: 0.000789 | Test: 0.182534 | LR: 8.00e-05
+Epoch 220 | Train: 0.000758 | Test: 0.183821 | LR: 8.00e-05
+Epoch 230 | Train: 0.001254 | Test: 0.178237 | LR: 8.00e-05
+Epoch 240 | Train: 0.000999 | Test: 0.191791 | LR: 8.00e-05
+Epoch 250 | Train: 0.001128 | Test: 0.188127 | LR: 6.40e-05
+Epoch 260 | Train: 0.001051 | Test: 0.187395 | LR: 6.40e-05
+Epoch 270 | Train: 0.001472 | Test: 0.181513 | LR: 6.40e-05
+Epoch 280 | Train: 0.001273 | Test: 0.181549 | LR: 6.40e-05
+Epoch 290 | Train: 0.000783 | Test: 0.187133 | LR: 5.12e-05
+Epoch 300 | Train: 0.000839 | Test: 0.204441 | LR: 5.12e-05
+Epoch 310 | Train: 0.001106 | Test: 0.201249 | LR: 5.12e-05
+Epoch 320 | Train: 0.000903 | Test: 0.199236 | LR: 5.12e-05
+Epoch 330 | Train: 0.000943 | Test: 0.188714 | LR: 5.12e-05
+Epoch 340 | Train: 0.000952 | Test: 0.191525 | LR: 4.10e-05
+Epoch 350 | Train: 0.000743 | Test: 0.196294 | LR: 4.10e-05
+Epoch 360 | Train: 0.001355 | Test: 0.197063 | LR: 4.10e-05
+Epoch 370 | Train: 0.000599 | Test: 0.188988 | LR: 3.28e-05
+Epoch 380 | Train: 0.000813 | Test: 0.201285 | LR: 3.28e-05
+Epoch 390 | Train: 0.000959 | Test: 0.199043 | LR: 2.62e-05
+Epoch 400 | Train: 0.000942 | Test: 0.187134 | LR: 2.62e-05
+Epoch 410 | Train: 0.000953 | Test: 0.197836 | LR: 2.62e-05
+Epoch 420 | Train: 0.000775 | Test: 0.192124 | LR: 2.62e-05
