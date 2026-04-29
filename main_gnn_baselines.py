@@ -1,4 +1,3 @@
-# main_gnn_baselines.py
 import argparse
 import torch
 import torch.nn as nn
@@ -9,6 +8,7 @@ from tqdm import tqdm
 from utils.splits import get_train_test_ids
 from utils.data_loader import StandardGraphDataset, get_k_graph_edge_index
 from models.gnn_baselines import FlexibleGNN
+from utils.logger import log_result
 import pickle
 
 
@@ -27,7 +27,6 @@ def evaluate(model, loader, criterion, device):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--split", type=str, default="A", choices=["A", "B"])
-    # FIXED: Changed "mlp" to "simple_mlp" to match what FlexibleGNN expects
     parser.add_argument(
         "--model", type=str, default="simple_mlp", choices=["simple_mlp", "attention"]
     )
@@ -37,20 +36,18 @@ def main():
     args = parser.parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load preprocessed data and split IDs
     with open("data/processed/ogw_data.pkl", "rb") as f:
         data_map = pickle.load(f)
     train_ids, test_ids = get_train_test_ids(args.split, list(data_map.keys()))
 
-    # Mock parameters for dataset initialization - replace with actual saved tensor files
     num_nodes = 12
+    num_sensor_pairs = list(data_map.values())[0].shape[1]
     static_edge_index = get_k_graph_edge_index(num_nodes, self_loops=False)
-    edge_feature_col_idxs = np.arange(66)  # Assuming 66 unique pairs
+    edge_feature_col_idxs = np.arange(num_sensor_pairs)
     fixed_fft_bin_indices = np.arange(251)
-    amp_means = np.zeros(66)
-    amp_stds = np.ones(66)
+    amp_means = np.zeros(num_sensor_pairs)
+    amp_stds = np.ones(num_sensor_pairs)
 
-    # Initialize Datasets and Loaders
     train_dataset = StandardGraphDataset(
         data_map,
         train_ids,
@@ -73,8 +70,6 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
-    # Initialize Model
-    # raw_edge_feat_dim = 3 (spatial) + 251 (freqs) * 2 (amp/phase) = 505
     model = FlexibleGNN(
         encoder_type=args.model,
         processor_type="mlp",
@@ -95,12 +90,10 @@ def main():
     criterion = nn.MSELoss()
 
     print(f"--- Training GNN Baseline ({args.model}) on Split {args.split} ---")
-
+    test_loss = 0.0
     for epoch in range(1, args.epochs + 1):
         model.train()
         train_loss = 0
-
-        # Wrapped the loader in tqdm to monitor speed
         loader_pbar = tqdm(
             train_loader, desc=f"Epoch {epoch:03d}/{args.epochs}", leave=False
         )
@@ -117,11 +110,13 @@ def main():
 
         train_loss /= len(train_loader.dataset)
 
-        if epoch % 10 == 0 or epoch == 1:
+        if epoch % 10 == 0 or epoch == args.epochs or epoch == 1:
             test_loss = evaluate(model, test_loader, criterion, device)
             print(
                 f"Epoch {epoch:03d} | Train Loss: {train_loss:.6f} | Test Loss: {test_loss:.6f}"
             )
+
+    log_result(args.split, f"GNN ({args.model})", test_loss)
 
 
 if __name__ == "__main__":
