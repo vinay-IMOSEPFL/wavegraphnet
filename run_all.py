@@ -26,9 +26,9 @@ def main():
     parser.add_argument(
         "--split",
         type=str,
-        default="A",
+        default="B",
         choices=["A", "B"],
-        help="Split A (paper setup) or Split B (inner train, outer test D1-D4 & D21-D24)",
+        help="Split A (paper setup) or Split B (inner train, outer test)",
     )
     parser.add_argument(
         "--skip_data", action="store_true", help="Skip the data preparation phase"
@@ -58,13 +58,14 @@ def main():
             print("Data preparation failed. Exiting.")
             sys.exit(1)
 
-    # Define the scripts and any extra arguments they need
+    # Updated scripts list to include the Improved Model
     scripts_to_run = [
-        ("main_cnn.py", []),
-        ("main_lstm.py", []),
-        ("main_gnn_baselines.py", []),
-        ("main_wavegraphnet.py", ["--mode", "inverse_only"]),
-        ("main_wavegraphnet.py", ["--mode", "coupled"]),
+        # ("main_cnn.py", []),
+        # ("main_lstm.py", []),
+        # ("main_gnn_baselines.py", []),
+        # ("main_wavegraphnet.py", ["--mode", "inverse_only"]),
+        # ("main_wavegraphnet.py", ["--mode", "coupled"]),
+        ("main_wavegraphnet_new.py", ["--mode", "coupled"]),  # Improved Model
     ]
 
     for script, extra_args in scripts_to_run:
@@ -88,7 +89,7 @@ def main():
                 if args.split in results:
                     print(f"{'Model Name':<30} | {'Test Loc MSE':<12}")
                     print("-" * 45)
-                    # Sort results by lowest loss
+                    # Sort results by lowest loss (lower is better for MSE)
                     sorted_res = sorted(
                         results[args.split].items(), key=lambda item: item[1]
                     )
