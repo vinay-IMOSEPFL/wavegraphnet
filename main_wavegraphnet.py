@@ -57,6 +57,15 @@ def train_model(
             fwd_loss_val = 0.0
 
         loss.backward()
+
+        # --- CRITICAL FIX: GRADIENT CLIPPING ---
+        # Prevents exploding gradients from NaN geometric calculations
+        # or extreme coordinate guesses from destroying network weights.
+        torch.nn.utils.clip_grad_norm_(inv_model.parameters(), max_norm=1.0)
+        if mode == "coupled":
+            torch.nn.utils.clip_grad_norm_(fwd_model.parameters(), max_norm=1.0)
+        # ---------------------------------------
+
         optimizer.step()
 
         total_loss += loss.item() * data_inv.num_graphs

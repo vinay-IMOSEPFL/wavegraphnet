@@ -151,8 +151,11 @@ class GNN_inv_HierarchicalAttention(nn.Module):
             edge_index=edge_index,
             edge_embeds=edge_embeddings_initial,
         )
+
         predictions = self.graph_decoder(node_embeddings_final, batch)
-        return predictions
+        # CRITICAL FIX 1: Bound predictions to [0, 1] using Sigmoid.
+        # This prevents wild coordinate guesses from destroying the forward model gradients.
+        return torch.sigmoid(predictions)
 
 
 class SimpleInteractionLayer(MessagePassing):
@@ -189,7 +192,7 @@ class DirectPathAttenuationGNN(nn.Module):
         self,
         raw_node_feat_dim: int = 2,
         physical_edge_feat_dim: int = 6,
-        hidden_dim: int = 256,
+        hidden_dim: int = 128,
         num_propagation_pairs: int = 36,
         num_interaction_layers: int = 4,
     ):
@@ -222,20 +225,30 @@ class DirectPathAttenuationGNN(nn.Module):
         damage_locs_expanded = damage_locs[graph_sensors_fwd.batch[row]]
 
         vec = source_nodes_coords - dest_nodes_coords
-        edge_length = vec.norm(dim=-1, keepdim=True)
+
+        # CRITICAL FIX 2: Epsilon-smoothed geometric distances to prevent NaN gradients
+        eps = 1e-8
+
+        edge_length = torch.sqrt(vec.pow(2).sum(dim=-1, keepdim=True) + eps)
 
         p1, p2, p3 = source_nodes_coords, dest_nodes_coords, damage_locs_expanded
-        l2 = (p2 - p1).norm(dim=-1, keepdim=True).pow(2)
-        t = torch.sum((p3 - p1) * (p2 - p1), dim=-1, keepdim=True) / (l2 + 1e-8)
+        l2 = (p2 - p1).pow(2).sum(dim=-1, keepdim=True).clamp(min=eps)
+        t = torch.sum((p3 - p1) * (p2 - p1), dim=-1, keepdim=True) / l2
         t = t.clamp(0, 1)
         projection = p1 + t * (p2 - p1)
-        dist_from_damage = (p3 - projection).norm(dim=-1, keepdim=True)
 
-        dist_transmitter_to_damage = (source_nodes_coords - damage_locs_expanded).norm(
-            dim=-1, keepdim=True
+        dist_from_damage = torch.sqrt(
+            (p3 - projection).pow(2).sum(dim=-1, keepdim=True) + eps
         )
-        dist_receiver_to_damage = (dest_nodes_coords - damage_locs_expanded).norm(
-            dim=-1, keepdim=True
+        dist_transmitter_to_damage = torch.sqrt(
+            (source_nodes_coords - damage_locs_expanded)
+            .pow(2)
+            .sum(dim=-1, keepdim=True)
+            + eps
+        )
+        dist_receiver_to_damage = torch.sqrt(
+            (dest_nodes_coords - damage_locs_expanded).pow(2).sum(dim=-1, keepdim=True)
+            + eps
         )
 
         physical_edge_features = torch.cat(
